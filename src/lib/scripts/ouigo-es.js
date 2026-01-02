@@ -29,13 +29,13 @@ function parsePdf(pdf, node, triggerNode) {
     let res = triggerNode.result[0];
 
     const topLeft = page.textInRect(0.0, 0.0, 0.5, 0.5);
-    const stations = topLeft.match(/\n(.*)\n\d\d:\d\d\n(.*)\n(\d\d:\d\d)/);
+    const stations = topLeft.match(/\n(.*)\n\d\d:\d\d\n+(.*)\n(\d\d:\d\d)/);
     if (stations) {
         res.reservationFor.departureStation.name = stations[1];
         res.reservationFor.arrivalStation.name = stations[2];
         res.reservationFor.arrivalTime = JsonLd.toDateTime(stations[3], "hh:mm", "es");
     } else {
-        const stationsV2 = topLeft.match(/\n\d\d:\d\d\n(.*)\n(\d\d:\d\d)\n(.*)/);
+        const stationsV2 = topLeft.match(/\n* \d\d:\d\d\n+(.*)\n+ *(\d\d:\d\d)\n+(.*)/);
         res.reservationFor.departureStation.name = stationsV2[1];
         res.reservationFor.arrivalStation.name = stationsV2[3];
         res.reservationFor.arrivalTime = JsonLd.toDateTime(stationsV2[2], "hh:mm", "es");

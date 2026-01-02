@@ -8,7 +8,7 @@ function parseOnePdfTicket(text) {
     const header = text.match(/(.*)\n +(\d{6})\n(.*)/);
     res.reservedTicket.ticketToken = 'qrcode:' + header[2];
     res.reservedTicket.name = header[1] + header[3];
-    const trip = text.match(/(.*)  +(\d\d:\d\d) +(.*)  +(\d\d:\d\d)\n.* (\d{1,5})  +.*(\d\d\.\d\d.\d{4})/);
+    const trip = text.match(/(.*)  +(\d\d:\d\d) +(.*)  +(\d\d:\d\d)\n+.* (\d{1,5})  +.*(\d\d\.\d\d.\d{4})/);
     res.reservationFor.departureStation.name = trip[1];
     res.reservationFor.arrivalStation.name = trip[3];
     res.reservationFor.arrivalTime = JsonLd.toDateTime(trip[6] + ' ' + trip[4], 'dd.MM.yyyy hh:mm', 'lv');

@@ -195,11 +195,11 @@ function parseSecutixPdfItineraryV1(text, res)
     var reservations = new Array();
     var pos = 0;
     while (true) {
-        var dep = text.substr(pos).match(/Départ [^ ]+ (\d+\.\d+\.\d+) à (\d+:\d+) [^ ]+ (.*)\n/);
+        const dep = text.substr(pos).match(/Départ \S+ (\d+\.\d+\.\d+) à (\d+:\d+) \S+ (.*)\n/);
         if (!dep)
             break;
         pos += dep.index + dep[0].length;
-        var arr = text.substr(pos).match(/Arrivée [^ ]+ (\d+\.\d+\.\d+) à (\d+:\d+) [^ ]+ (.*)\n\s+(.*)\n/);
+        const arr = text.substr(pos).match(/Arrivée \S+ (\d+\.\d+\.\d+) à (\d+:\d+) \S+ (.*)\n\s*(.*)/);
         if (!arr)
             break;
         pos += arr.index + arr[0].length;
@@ -225,7 +225,7 @@ function parseSecutixPdfItineraryV2(text, res)
     var reservations = new Array();
     var pos = 0;
     while (true) {
-        var data = text.substr(pos).match(/ *(\d+h\d+)\n *(.*)\n *(.*)\n(?: *Voiture (\d+) - Place (\d+)\n.*\n.*\n)? *(\d+h\d+)\n(.*)\n/);
+        var data = text.substr(pos).match(/ *(\d+h\d+)\n *(.*)\n+ *(.*)\n+(?: *Voiture (\d+) - Place (\d+)\n.*\n.*\n)? *(\d+h\d+)\n(.*)\n/);
         if (!data)
             break;
         pos += data.index + data[0].length;
