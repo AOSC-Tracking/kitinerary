@@ -42,8 +42,11 @@ void PdfPagePrivate::load()
 #if KPOPPLER_VERSION < QT_VERSION_CHECK(25, 1, 0)
     std::unique_ptr<GooString> s(device.getText(pageRect->x1, pageRect->y1, pageRect->x2, pageRect->y2));
     m_text = QString::fromUtf8(s->c_str());
-#else
+#elif KPOPPLER_VERSION <QT_VERSION_CHECK(25, 12, 90)
     const auto s = device.getText(pageRect->x1, pageRect->y1, pageRect->x2, pageRect->y2);
+    m_text = QString::fromUtf8(s.c_str());
+#else
+    const auto s = device.getText(PDFRectangle(pageRect->x1, pageRect->y1, pageRect->x2, pageRect->y2));
     m_text = QString::fromUtf8(s.c_str());
 #endif
 
@@ -111,11 +114,14 @@ QString PdfPage::textInRect(double left, double top, double right, double bottom
 
     TextOutputDev device(nullptr, false, 0, false, false);
     d->m_doc->m_popplerDoc->displayPageSlice(&device, d->m_pageNum + 1, 72, 72, 0, false, true, false, -1, -1, -1, -1);
-#if KPOPPLER_VERSION <QT_VERSION_CHECK(25, 1, 0)
+#if KPOPPLER_VERSION < QT_VERSION_CHECK(25, 1, 0)
     std::unique_ptr<GooString> s(device.getText(l, t, r, b));
     return QString::fromUtf8(s->c_str());
-#else
+#elif KPOPPLER_VERSION <QT_VERSION_CHECK(25, 12, 90)
     const auto s = device.getText(l, t, r, b);
+    return QString::fromUtf8(s.c_str());
+#else
+    const auto s = device.getText(PDFRectangle(l, t, r, b));
     return QString::fromUtf8(s.c_str());
 #endif
 }
