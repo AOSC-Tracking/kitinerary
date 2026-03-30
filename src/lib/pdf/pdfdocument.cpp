@@ -266,8 +266,12 @@ int PdfDocument::fileSize() const
     return d->m_pdfData.size();
 }
 
-static QDateTime parsePdfDateTime(const GooString *str)
+[[nodiscard]] static QDateTime parsePdfDateTime(const GooString *str)
 {
+    if (!str) {
+        return {};
+    }
+
     int year;
     int month;
     int day;
@@ -278,7 +282,11 @@ static QDateTime parsePdfDateTime(const GooString *str)
     int tzMins;
     char tz;
 
+#if KPOPPLER_VERSION < QT_VERSION_CHECK(26, 3, 90)
     if (!parseDateString(str, &year, &month, &day, &hour, &min, &sec, &tz, &tzHours, &tzMins)) {
+#else
+    if (!parseDateString(str->toStr(), &year, &month, &day, &hour, &min, &sec, &tz, &tzHours, &tzMins)) {
+#endif
         return {};
     }
 
@@ -300,18 +308,12 @@ static QDateTime parsePdfDateTime(const GooString *str)
 QDateTime PdfDocument::creationTime() const
 {
     std::unique_ptr<GooString> dt(d->m_popplerDoc->getDocInfoCreatDate());
-    if (!dt) {
-        return {};
-    }
     return parsePdfDateTime(dt.get());
 }
 
 QDateTime PdfDocument::modificationTime() const
 {
     std::unique_ptr<GooString> dt(d->m_popplerDoc->getDocInfoModDate());
-    if (!dt) {
-        return {};
-    }
     return parsePdfDateTime(dt.get());
 }
 
